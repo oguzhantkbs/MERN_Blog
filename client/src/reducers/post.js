@@ -4,11 +4,21 @@ const initialState = {
     posts: []
 }
 
-export default (state = initialState, { type, payload }) => {
-    switch (type) {
+const postReducer = (state = initialState, action) => {
+
+    switch (action.types) {
 
         case types.FETCH_POSTS:
-            return { ...state, ...payload }
+            return {
+                ...state,
+                posts: action.payload
+            }
+
+        case types.CREATE_POST:
+            return {
+                ...state,
+                posts: [...state.posts, action.payload]
+            }
 
         default:
             return {
@@ -16,3 +26,4 @@ export default (state = initialState, { type, payload }) => {
             }
     }
 }
+export default postReducer

@@ -1,9 +1,11 @@
-import React, { useState } from 'react'
+import React, { useEffect, useState } from 'react'
 import { CssBaseline, Container, Grid, AppBar, Toolbar, Typography, Button, IconButton, makeStyles, ThemeProvider } from '@material-ui/core'
 import PenIcon from '@material-ui/icons/Create'
 import { Redirect, Routes, Route, BrowserRouter, Navigate } from 'react-router-dom'
 import PostList from './components/PostList'
 import { AddPostForm } from './components/AddPostForm'
+import { useDispatch } from 'react-redux'
+import { fetchPosts } from './actions/post'
 
 const useStyles = makeStyles((theme) => ({
   root: {
@@ -24,8 +26,14 @@ const useStyles = makeStyles((theme) => ({
 }))
 
 const App = () => {
-
+  const dispatch = useDispatch();
+  console.log("Dispatvg APP : ", dispatch)
   const [open, setOpen] = useState(false)
+
+  useEffect(() => {
+    // console.log("dispatch ")
+    dispatch(fetchPosts())
+  }, [dispatch])
 
   const handleOpen = () => {
     setOpen(true)

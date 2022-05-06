@@ -1,9 +1,12 @@
-import React from 'react'
+import React, { useState } from 'react'
 import { makeStyles } from '@material-ui/core'
 import { Button, TextField, Select, Input, MenuItem, Dialog, DialogActions, DialogContent, DialogContentText, DialogTitle } from '@material-ui/core'
 import { useForm, Controller } from 'react-hook-form'
+import { useDispatch } from 'react-redux'
 import * as yup from 'yup'
 import { yupResolver } from '@hookform/resolvers/yup'
+import FileBase64 from 'react-file-base64'
+import { createPost } from '../actions/post'
 
 const useStyles = makeStyles((theme) => ({  // mui styles
     paper: {
@@ -23,13 +26,27 @@ const postSchema = yup.object().shape({  // i create a yup schema for form valid
     tag: yup.mixed().oneOf(tags)
 })
 
-
 export const AddPostForm = ({ open, handleClose }) => {
+
+    const [file, setFile] = useState(null)
+    const dispatch = useDispatch();
     // console.log(handleClose)
 
     const { register, handleSubmit, control, formState: { errors }, reset } = useForm({
         resolver: yupResolver(postSchema)
     });
+
+    const onSubmit = (data) => {
+        // console.log(data)
+        dispatch(createPost({ ...data, image: file }))
+        clearForm()
+    }
+
+    const clearForm = () => {
+        reset() //reset is coming react hook form and reset our form
+        setFile(null) // remove file in our state
+        handleClose() // close dialog
+    }
 
     const classes = useStyles();
     return (
@@ -40,7 +57,7 @@ export const AddPostForm = ({ open, handleClose }) => {
                     Yeni bir yazı eklemek için aşağıdaki formu doldurun.
                 </DialogContentText>
                 <div className={classes.root}>
-                    <form noValidate >
+                    <form noValidate onSubmit={handleSubmit(onSubmit)}>
                         <TextField
                             id='title'
                             label="Başlık"
@@ -50,7 +67,7 @@ export const AddPostForm = ({ open, handleClose }) => {
                             size="small"
                             error={errors.title ? true : false}
                             fullWidth
-                            inputRef={register} // connection with yup postSchema
+                            {...register('title')} // connection with yup postSchema
                         />
                         <TextField
                             id='subtitle'
@@ -61,10 +78,10 @@ export const AddPostForm = ({ open, handleClose }) => {
                             size="small"
                             error={errors.subtitle ? true : false}
                             fullWidth
-                            inputRef={register} // connection with yup postSchema
+                            {...register('subtitle')} // connection with yup postSchema
                         />
                         <Controller
-                            render={({ field }) => (
+                            render={() => (
                                 <Select
                                     imput={<Input />}
                                     className={classes.textField}
@@ -72,7 +89,7 @@ export const AddPostForm = ({ open, handleClose }) => {
                                 >
                                     {
                                         tags.map((tag, index) => (
-                                            console.log(field),
+                                            // console.log(tags[0]),
                                             <MenuItem key={index} value={tag}>
                                                 {tag}
                                             </MenuItem>
@@ -90,7 +107,7 @@ export const AddPostForm = ({ open, handleClose }) => {
 
                         <TextField
                             id='content'
-                            label="Alt Başlık"
+                            label="İçerik"
                             name='content'
                             multiline
                             rows={4}
@@ -99,11 +116,26 @@ export const AddPostForm = ({ open, handleClose }) => {
                             size="small"
                             error={errors.content ? true : false}
                             fullWidth
-                            inputRef={register} // connection with yup postSchema
+                            {...register('content')} // connection with yup postSchema
                         />
+                        <FileBase64 multiple={false}
+                            onDone={({ base64 }) => setFile(base64)}  // if is it called set uploaded file  in our state
+                        />
+
                     </form>
                 </div>
             </DialogContent>
-        </Dialog>
+            <DialogActions>
+                <Button color='inherit' onClick={clearForm}>Vazgeç</Button>
+                <Button
+                    type="submit"
+                    variant='outlined'
+                    color="primary"
+                    onClick={() => handleSubmit(onSubmit)()} // because out of form
+                >
+                    Yayınla
+                </Button>
+            </DialogActions >
+        </Dialog >
     )
 }

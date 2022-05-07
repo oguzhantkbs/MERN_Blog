@@ -1,4 +1,4 @@
-import * as types from '../actions/types'
+import * as type from '../actions/types'
 
 const initialState = {
     posts: []
@@ -6,21 +6,24 @@ const initialState = {
 
 const postReducer = (state = initialState, action) => {
 
-    switch (action.types) {
+    switch (action.type) {
+        case type.FETCH_POSTS:
+            console.log("FETCH_POSTS reducer")
 
-        case types.FETCH_POSTS:
             return {
                 ...state,
                 posts: action.payload
             }
 
-        case types.CREATE_POST:
+        case type.CREATE_POST:
             return {
                 ...state,
                 posts: [...state.posts, action.payload]
             }
 
         default:
+            console.log("Default reducer")
+
             return {
                 ...state
             }

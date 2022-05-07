@@ -4,7 +4,7 @@ import * as types from "./types"
 export const fetchPosts = () => async (dispatch) => {
     try {
         const { data } = await api.fetchPosts();
-        console.log("Data Post: ", dispatch)
+        console.log("Data Post: ", data)
         dispatch({
             type: types.FETCH_POSTS,
             payload: data

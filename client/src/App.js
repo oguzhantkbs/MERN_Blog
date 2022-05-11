@@ -1,80 +1,110 @@
-import React, { useEffect, useState } from 'react'
-import { CssBaseline, Container, Grid, AppBar, Toolbar, Typography, Button, IconButton, makeStyles, ThemeProvider } from '@material-ui/core'
-import PenIcon from '@material-ui/icons/Create'
-import { Redirect, Routes, Route, BrowserRouter, Navigate } from 'react-router-dom'
-import PostList from './components/PostList'
-// import PostDetails from './components/PostDetails'
-import { AddPostForm } from './components/AddPostForm'
-import { useDispatch } from "react-redux"
-import { fetchPosts } from "./actions/post"
-import RouteProps from './hoc/RouteProps'
+import React, { useState, useEffect } from "react";
+import { useDispatch } from "react-redux";
+import { fetchPosts } from "./actions/post";
+import { makeStyles } from "@material-ui/core/styles";
+import {
+  BrowserRouter as Router,
+  Switch,
+  Route,
+  Redirect,
+} from "react-router-dom";
+import {
+  CssBaseline,
+  Container,
+  Grid,
+  AppBar,
+  Toolbar,
+  Typography,
+  Button,
+  IconButton,
+} from "@material-ui/core";
+import MenuIcon from "@material-ui/icons/MenuBook";
+import PenIcon from "@material-ui/icons/Create";
+import PostsList from "./components/PostsList";
+import AddPostForm from "./components/AddPostForm";
+import PostDetails from "./components/PostDetails";
 
 const useStyles = makeStyles((theme) => ({
   root: {
-    flexGrow: 1
+    flexGrow: 1,
   },
   menuButton: {
     marginRight: theme.spacing(2),
   },
   title: {
-    flexGrow: 1
+    flexGrow: 1,
   },
   container: {
-    marginTop: theme.spacing(3)
+    marginTop: theme.spacing(3),
   },
-  toolbar: {
-    flexGrow: 1
-  }
-}))
+}));
 
 const App = () => {
   const dispatch = useDispatch();
-  const [open, setOpen] = useState(false)
 
+  const [open, setOpen] = useState(false);
   useEffect(() => {
-    // console.log("Dispatvg APP : ", dispatch(fetchPosts()))
-    dispatch(fetchPosts())
-  }, [dispatch])
+    dispatch(fetchPosts());
+  }, [dispatch]);
 
   const handleOpen = () => {
-    setOpen(true)
-  }
-  const handleClose = () => {
-    setOpen(false)
-  }
+    setOpen(true);
+  };
 
+  const handleClose = () => {
+    setOpen(false);
+  };
 
   const classes = useStyles();
   return (
     <>
       <CssBaseline />
       <Container maxWidth="lg">
-        <AppBar position='static' color='inherit' elevation={0}>
+        <AppBar position="static" color="inherit" elevation={0}>
           <Toolbar>
-            <IconButton edge="start" className={classes.container} color="inherit" />
-            <Typography variant='h6' color="secondary" className={classes.title} >
-              <a href='/posts'>Blogify</a>
+            <IconButton
+              edge="start"
+              className={classes.menuButton}
+              color="inherit"
+              aria-label="menu"
+            >
+              <MenuIcon />
+            </IconButton>
+
+            <Typography
+              variant="h6"
+              color="secondary"
+              className={classes.title}
+            >
+              <a href="http://localhost:3000/posts">Blogify</a>
             </Typography>
-            <Button color="primary" variant='outlined' startIcon={<PenIcon />} onClick={handleOpen}>Yeni Yazı</Button>
+
+            <Button
+              color="primary"
+              variant="outlined"
+              startIcon={<PenIcon />}
+              onClick={handleOpen}
+            >
+              Yeni Yazı
+            </Button>
           </Toolbar>
         </AppBar>
         <Grid container className={classes.container}>
           <Grid item xs={12}>
-
-            <BrowserRouter>
-              <Routes>
-                <Route exact path="/posts" element={<PostList />} />
-                <Route exact path="/posts/:id" element={<RouteProps />} />
-              </Routes>
-            </BrowserRouter>
+            <Router>
+              <Switch>
+                <Route exact path="/posts" component={PostsList} />
+                <Route exact path="/posts/:id" component={PostDetails} />
+              </Switch>
+              <Redirect from="/" to="/posts" />
+            </Router>
           </Grid>
-
         </Grid>
+
+        <AddPostForm open={open} handleClose={handleClose} />
       </Container>
-
-      <AddPostForm open={open} handleClose={handleClose} />
-
     </>
-  )
-}
-export default App
+  );
+};
+
+export default App;

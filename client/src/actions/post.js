@@ -4,13 +4,25 @@ import * as types from "./types"
 export const fetchPosts = () => async (dispatch) => {
     try {
         const { data } = await api.fetchPosts();
-        console.log("Data Post: ", data)
+        // console.log("Data Post: ", data)
         dispatch({
             type: types.FETCH_POSTS,
             payload: data
         })
     } catch (error) {
         console.log("Error : fetch")
+        console.log(error)
+    }
+}
+
+export const fetchSinglePost = (id) => async (dispatch) => {
+    try {
+        const { data } = await api.fetchSinglePost(id)
+        dispatch({
+            type: types.FETCH_SINGLE_POST,
+            payload: data
+        })
+    } catch (error) {
         console.log(error)
     }
 }
@@ -26,3 +38,4 @@ export const createPost = (post) => async (dispatch) => {
         console.log(error)
     }
 }
+

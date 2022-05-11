@@ -3,9 +3,11 @@ import { CssBaseline, Container, Grid, AppBar, Toolbar, Typography, Button, Icon
 import PenIcon from '@material-ui/icons/Create'
 import { Redirect, Routes, Route, BrowserRouter, Navigate } from 'react-router-dom'
 import PostList from './components/PostList'
+// import PostDetails from './components/PostDetails'
 import { AddPostForm } from './components/AddPostForm'
 import { useDispatch } from "react-redux"
 import { fetchPosts } from "./actions/post"
+import RouteProps from './hoc/RouteProps'
 
 const useStyles = makeStyles((theme) => ({
   root: {
@@ -32,7 +34,7 @@ const App = () => {
   useEffect(() => {
     // console.log("Dispatvg APP : ", dispatch(fetchPosts()))
     dispatch(fetchPosts())
-  }, [])
+  }, [dispatch])
 
   const handleOpen = () => {
     setOpen(true)
@@ -51,7 +53,7 @@ const App = () => {
           <Toolbar>
             <IconButton edge="start" className={classes.container} color="inherit" />
             <Typography variant='h6' color="secondary" className={classes.title} >
-              <a href='http:/localhost:3000/posts'>Blogify</a>
+              <a href='/posts'>Blogify</a>
             </Typography>
             <Button color="primary" variant='outlined' startIcon={<PenIcon />} onClick={handleOpen}>Yeni Yazı</Button>
           </Toolbar>
@@ -62,7 +64,7 @@ const App = () => {
             <BrowserRouter>
               <Routes>
                 <Route exact path="/posts" element={<PostList />} />
-                <Route path="/" element={<PostList />} />
+                <Route exact path="/posts/:id" element={<RouteProps />} />
               </Routes>
             </BrowserRouter>
           </Grid>
